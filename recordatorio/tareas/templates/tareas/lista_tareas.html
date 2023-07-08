@@ -1,0 +1,144 @@
+{% extends 'tareas/base.html' %}
+
+{% block logo %}
+{% endblock %}
+
+{% block content %}
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  
+  #myTable {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 100%;
+    margin: auto;
+    border: 1px solid #ddd;
+    font-size: 18px;
+  }
+  
+  #myTable th, #myTable td {
+    text-align: left;
+    padding: 12px;
+  }
+  
+  #myTable tr {
+    border-bottom: 1px solid #ddd;
+  }
+  
+  #myTable tr.header, #myTable tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  /* Media query para pantallas pequeñas */
+  @media screen and (max-width: 600px) {
+    #myTable thead {
+      display: none; /* Ocultar el encabezado de la tabla en pantallas pequeñas */
+    }
+    
+    #myTable tbody tr {
+      display: block;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+    }
+    
+    #myTable tbody td {
+      display: flex;
+      align-items: center;
+      border-bottom: none;
+      width: 100%;
+    }
+    
+    #myTable tbody td:before {
+      content: attr(data-label);
+      font-weight: bold;
+      flex-basis: 30%;
+      padding: 5px;
+    }
+    
+    #myTable tbody td:not(:first-child) {
+      flex-basis: 70%;
+      text-align: center; /* Centrar el contenido horizontalmente */
+    }
+  }
+</style>
+<div style="display: flex; flex-wrap: wrap; justify-content: center;">
+  <div style="border: 1px solid black; padding: 20px; width: 300px; height: auto; margin-right: 20px; margin-top: 20px; margin-bottom: 20px; margin-left: 20px;">
+    <h2>Perfil del Usuario</h2>
+    <p><strong>Usuario:</strong> {{ request.user.username|capfirst }}</p>
+    <p><strong>Nombre:</strong> {{ request.user.first_name|capfirst }} {{ request.user.last_name|capfirst }}</p>
+    <p><strong>Email:</strong> {{ request.user.email }}</p>
+    <!-- Agrega aquí más información del perfil del usuario si es necesario -->
+    <form method="GET" action="{% url 'lista_tareas' %}">
+      <label for="estado">Estado:</label>
+      <select id="estado" name="estado">
+        <option value="">Todos</option>
+        <option value="Terminada">Terminada</option>
+        <option value="Pendiente">Pendiente</option>
+        <!-- Agrega más opciones de estado si es necesario -->
+      </select>
+      <br>
+      <label for="etiqueta">Etiqueta:</label>
+      <select id="etiqueta" name="etiqueta">
+        <option value="">Todas</option>
+        {% for etiqueta in etiquetas %}
+          <option value="{{ etiqueta.nombre }}">{{ etiqueta.nombre }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Filtrar</button>
+    </form>
+  </div>
+  <div style="text-align: center;">
+    <h1>Detalle de Tarea</h1>
+    <div style="overflow-x: auto;">
+      <div style="max-width: 120%;">
+        <table id="myTable" style="width: 100%;">
+          <thead>
+            <tr class="header">
+              <th style="width: 20%;">Título</th>
+              <th style="width: 30%;">Fecha de Vencimiento</th>
+              <th style="width: 20%;">Estado</th>
+              <th style="width: 25%;">Etiqueta</th>
+              <th style="width: 25%;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for tarea in tareas %}
+              <tr {% if tarea.estado == 'Terminada' %}style="background-color: #999; color: #333; text-decoration: line-through;"{% endif %}>
+                <td style="width: 20%;">{{ tarea.titulo }}</td>
+                <td>{{ tarea.fecha_vencimiento }}</td>
+                <td>{{ tarea.estado }}</td>
+                <td>{{ tarea.etiqueta }}</td>
+                <td>
+                  <a href="{% url 'detalle_tarea' tarea.id %}" class="btn btn-primary">Ver</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function myFunction() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
+</script>
+{% endblock %}

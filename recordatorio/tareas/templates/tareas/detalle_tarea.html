@@ -1,0 +1,131 @@
+{% extends 'tareas/base.html' %}
+
+{% block logo %}
+{% endblock %}
+
+{% block content %}
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  
+  #myTable {
+    border-collapse: collapse;
+    width: 60%;
+    margin: auto;
+    border: 1px solid #ddd;
+    font-size: 18px;
+  }
+  
+  #myTable th, #myTable td {
+    text-align: left;
+    padding: 12px;
+  }
+  
+  #myTable tr {
+    border-bottom: 1px solid #ddd;
+  }
+  
+  #myTable tr.header, #myTable tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  /* Media query para pantallas pequeñas */
+  @media screen and (max-width: 600px) {
+    #myTable {
+      width: 100%;
+    }
+    
+    #myTable thead {
+      display: none;
+    }
+    
+    #myTable tbody tr {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    
+    #myTable tbody td {
+      width: calc(50% - 6px);
+    }
+    
+    #myTable tbody td:nth-child(odd) {
+      border-right: 1px solid #ddd;
+    }
+  }
+  
+  .task-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .task-container .btn {
+    margin-left: 10px;
+  }
+</style>
+<table id="myTable">
+  <thead>
+    <tr>
+      <td>
+        <a href="{% url 'lista_tareas' %}" class="btn btn-secondary">Regresar a mis tareas</a>
+      </td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr class="header">
+      <th style="width:10%;">Titulo</th>
+      <th style="width:30%;">Descripción</th>
+      <th style="width:15%;">Fecha de Vencimiento</th>
+      <th style="width:15%;">Estado</th>
+      <th style="width:15%;">Etiqueta</th>
+      <th style="width:15%;">Usuario</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td id="titulo">{{ tarea.titulo }}</td>
+      <td id="descripcion">{{ tarea.descripcion }}</td>
+      <td id="fecha_vencimiento">{{ tarea.fecha_vencimiento }}</td>
+      <td id="estado">{{ tarea.estado }}</td>
+      <td id="etiqueta">{{ tarea.etiqueta }}</td>
+      <td>{{ tarea.usuario }}</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>
+        <a href="{% url 'editar_tarea' tarea.id %}" class="btn btn-primary">Editar</a>
+      </td>
+      <td>
+        <button type="button" class="btn btn-success" id="completarBtn">Terminar</button>
+      <form id="completarForm" method="POST" action="{% url 'completar_tarea' tarea.id %}" style="display: none;">
+          {% csrf_token %}
+          <input type="hidden" name="tarea_id" value="{{ tarea.id }}">
+        </form>
+      </td>
+      <td></td>
+      <td></td>
+      <td>
+        <form method="POST" action="{% url 'eliminar_tarea' tarea.id %}" class="delete-form" onsubmit="return confirm('¿Estás seguro de que deseas eliminar la tarea?');">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<script>
+  document.getElementById('completarBtn').addEventListener('click', function() {
+    if (confirm('¿Estás seguro de que deseas marcar esta tarea como terminada?')) {
+      document.getElementById('completarForm').submit();
+    }
+  });
+</script>
+
+
+{% endblock %}
