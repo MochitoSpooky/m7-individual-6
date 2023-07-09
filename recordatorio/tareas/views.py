@@ -6,6 +6,7 @@ from django.contrib.auth.views import LogoutView
 from django.contrib.auth.models import User
 from .forms import TareaForm
 from django.http import JsonResponse
+from .forms import ObservacionesForm
 
 
 def home(request):
@@ -72,14 +73,21 @@ def lista_tareas(request):
 
     return render(request, 'tareas/lista_tareas.html', {'tareas': tareas, 'etiquetas': lista_e, 'usuario': usuario})
 
-@login_required
 def detalle_tarea(request, tarea_id):
     tarea = get_object_or_404(Tarea, id=tarea_id, usuario=request.user)
 
+    if request.method == 'POST':
+        form = ObservacionesForm(request.POST)
+        if form.is_valid():
+            tarea.observaciones = form.cleaned_data['observaciones']
+            tarea.save()
+    else:
+        form = ObservacionesForm(initial={'observaciones': tarea.observaciones})
+
     return render(request, 'tareas/detalle_tarea.html', {
         'tarea': tarea,
+        'form': form,
     })
-
 @login_required
 def completar_tarea(request, tarea_id):
     tarea = get_object_or_404(Tarea, id=tarea_id, usuario=request.user)

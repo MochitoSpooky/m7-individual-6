@@ -1,10 +1,12 @@
 {% extends 'tareas/base.html' %}
 {% block logo %}{% endblock %}
-
+{% load static %}
 {% block content %}
   <div class="welcome-container">
     <h1>Bienvenido(a), {{ request.user.username|capfirst }}!</h1>
     <p>Gracias por iniciar sesión.</p>
     <p>¡Explora todas las funciones y disfruta de una experiencia optimizada para organizar tus tareas de manera efectiva!</p>
+    <img src="{% static 'img/logo.png' %}" alt="Nombre de la Página" width="350px"; height="400px">
   </div>
+
 {% endblock %}

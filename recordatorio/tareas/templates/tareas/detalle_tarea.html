@@ -65,12 +65,45 @@
   .task-container .btn {
     margin-left: 10px;
   }
+  /* Estilos personalizados para el botón de regresar */
+.btn-back {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 4px;
+}
+
+.btn-back:hover {
+  background-color: #45a049;
+}
+
+.btn-back:active {
+  background-color: #3e8e41;
+}
+/* Orange */
+.warning {
+    color: rgb(255, 255, 255);
+    background: #ff9800;
+}
+
+.warning:hover {
+    color: white;
+    background: #e08701;
+
+}
+.default:hover {
+    background: #e7e7e7;
+}
 </style>
 <table id="myTable">
   <thead>
     <tr>
       <td>
-        <a href="{% url 'lista_tareas' %}" class="btn btn-secondary">Regresar a mis tareas</a>
+        <a href="{% url 'lista_tareas' %}" class="btn btn-secondary btn-back">Regresar a mis tareas</a>
       </td>
       <td></td>
       <td></td>
@@ -89,7 +122,7 @@
   </thead>
   <tbody>
     <tr>
-      <td id="titulo">{{ tarea.titulo }}</td>
+      <th id="titulo">{{ tarea.titulo }}</th>
       <td id="descripcion">{{ tarea.descripcion }}</td>
       <td id="fecha_vencimiento">{{ tarea.fecha_vencimiento }}</td>
       <td id="estado">{{ tarea.estado }}</td>
@@ -97,9 +130,21 @@
       <td>{{ tarea.usuario }}</td>
     </tr>
     <tr>
-      <td></td>
+      <th style="width:10%;">Observaciones:</th>
+      <td colspan="6">
+        <form method="post">
+          {% csrf_token %}
+          {{ form.observaciones }}
+          <br>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+      </td>
+    </tr>
+    <tr>
       <td>
-        <a href="{% url 'editar_tarea' tarea.id %}" class="btn btn-primary">Editar</a>
+      </td>
+      <td>
+        <a href="{% url 'editar_tarea' tarea.id %}" class="btn warning"> Editar</a>
       </td>
       <td>
         <button type="button" class="btn btn-success" id="completarBtn">Terminar</button>
